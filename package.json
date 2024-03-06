@@ -1,6 +1,6 @@
 {
   "name": "@spuq/json-ipc",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Inter-Process Communication in JSON using named pipes",
   "author": "Sanne 'SpuQ' Santens",
   "license": "ISC",
