@@ -5,6 +5,7 @@ Exchange JSON information between two processes on the same system using named p
 Install using npm
 ```
 npm install --save @spuq/json-ipc
+npm install --save-dev @types/spuq__json-ipc
 ```
 
 ## Usage

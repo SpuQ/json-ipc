@@ -1,4 +1,4 @@
-import { IPC_Client } from "./json-ipc";
+import { IPC_Client } from "./src/json-ipc";
 
 const host = new IPC_Client( true, "test","./pipes");
 const client = new IPC_Client( false, "test","./pipes");

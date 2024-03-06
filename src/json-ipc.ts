@@ -7,7 +7,7 @@
  */
 
 import { execSync } from "child_process";
-import EventEmitter from "events";
+import {EventEmitter} from "events";
 import * as fs from 'fs';
 
 const defaultPipeFolder = '~/.pipes';
@@ -15,19 +15,13 @@ const defaultPipeFolder = '~/.pipes';
 const ipc_end_message = { ipc: "end" };
 const ipc_start_message = { ipc: "start" };
 
-/*
- *  IPC Client
- */
-export declare interface IPC_Client {
+export class IPC_Client extends EventEmitter {
     pipeFolder:string;
     inPipePath:string;
     outPipePath:string;
     inputStream: fs.ReadStream|null;
     outputStream: fs.WriteStream|null;
-    on(event:'data', listener: (data:object)=>void):this;
-}
-
-export class IPC_Client extends EventEmitter {
+    
     constructor( isHost:boolean, name:string, pipeFolder?:string ){
         super();
         this.pipeFolder = pipeFolder?pipeFolder:defaultPipeFolder;

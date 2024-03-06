@@ -1,24 +1,34 @@
 {
-  "name": "json-ipc",
+  "name": "@spuq/json-ipc",
   "version": "1.0.0",
-  "description": "Inter-Process Communication in JSON",
-  "main": "build/json-ipc.js",
+  "description": "Inter-Process Communication in JSON using named pipes",
+  "author": "Sanne 'SpuQ' Santens",
+  "license": "ISC",
+  "main": "./lib/json-ipc.js",
+  "types": "./lib/json-ipc.d.ts",
+  "files": [
+    "lib/**/*",
+    "README.md"
+  ],
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodemon test.ts",
+    "build": "tsc"
   },
   "keywords": [
     "ipc",
     "json"
   ],
-  "author": "Sanne 'SpuQ' Santens",
-  "license": "ISC",
-  "dependencies": {
-    "child_process": "^1.0.2",
-    "events": "^3.3.0",
-    "fs": "^0.0.1-security",
-    "ts-node": "^10.9.2"
-  },
   "devDependencies": {
-    "@types/node": "^20.11.24"
+    "@types/events": "^3.0.3",
+    "@types/node": "^20.11.24",
+    "typescript": "^5.3.3"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "funding": {
+    "type": "patreon",
+    "url": "https://www.patreon.com/SpuQ"
   }
 }
