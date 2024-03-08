@@ -20,7 +20,17 @@ ipc.on('data', (data:object)=>{
 });
 
 // sending data to the other proces
-client.send( [JSON object] );
+ipc.send( [JSON object] );
+
+// Connection status
+
+ipc.on('connected', ()=>{
+    console.log("Other process connected");
+});
+
+ipc.on('disconnected', ()=>{
+    console.log("Other process disconnected");
+});
 ```
 
 ## License & Contribution
