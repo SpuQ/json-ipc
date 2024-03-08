@@ -21,6 +21,7 @@ export class IPC_Client extends EventEmitter {
     outPipePath:string;
     inputStream: fs.ReadStream|null;
     outputStream: fs.WriteStream|null;
+    connected: boolean;
     
     constructor( isHost:boolean, name:string, pipeFolder?:string ){
         super();
@@ -31,6 +32,8 @@ export class IPC_Client extends EventEmitter {
 
         this.inputStream = null;
         this.outputStream = null;
+
+        this.connected = false;
 
         this.start();   // Start the IPC Client
     }
@@ -65,6 +68,18 @@ export class IPC_Client extends EventEmitter {
         return;
     }
 
+    private setConnected( connected:boolean ){
+        if( connected != this.connected ){
+            this.connected = connected;
+            if(connected){
+                this.emit('connected');
+            }
+            else{
+                this.emit('disconnected');
+            }
+        }
+    }
+
     // End the IPC
     private async end(){
         // notify the other party
@@ -85,7 +100,8 @@ export class IPC_Client extends EventEmitter {
                 await fs.promises.mkdir(this.pipeFolder, {recursive:true})
             } catch( err ){
                 // If this doesn't work, that's bad...
-                console.error("ERR: unable to create pipe folder ("+this.pipeFolder+"): "+err);
+                //console.error("ERR: unable to create pipe folder ("+this.pipeFolder+"): "+err);
+                this.emit('error', 'unable to create IPC: '+ err);
                 return false;
             }
         }
@@ -100,13 +116,13 @@ export class IPC_Client extends EventEmitter {
             return;
         }
         // When receiving data
-        this.inputStream?.on('data',(data:string) => {
+        this.inputStream.on('data',(data:string) => {
             this.emitDataEvent( data );
-            //this.inputStream?.close();
-            //this.createInputStream();
+            this.setConnected(true);
         });
         // When error, close and reopen stream
-        this.inputStream?.on('error', (err:any) =>{
+        this.inputStream.on('error', (err:any) =>{
+            console.error(err);
             this.inputStream?.close();
             this.createInputStream();
         });
@@ -119,10 +135,11 @@ export class IPC_Client extends EventEmitter {
             console.error("ERR: Couldn't create output stream: "+err);
             return;
         }
-        // When error, close and reopen stream
-        this.outputStream?.on('error',( err:any ) =>{
-            this.outputStream?.close();
-            this.createOutputStream();
+        // When error, close and reopen both streams
+        // #HelloIT #HaveYouTriedToTurnItOfAndOnAgain?
+        this.outputStream.on('error',( err:any ) =>{
+            this.setConnected(false);
+            this.start();
         });
     }
 
@@ -135,7 +152,8 @@ export class IPC_Client extends EventEmitter {
                 // If this pipe does not exist, create it
                 execSync('mkfifo '+pipePath);
             } catch( err:any ){
-                console.error("ERR: Could not create pipe ("+pipePath+"): "+err);
+                //console.error("ERR: Could not create pipe ("+pipePath+"): "+err);
+                this.emit('error', 'Unable to create IPC: '+err);
             }
         }
     }
